@@ -1,0 +1,73 @@
+/* Reset default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Full-screen background */
+body {
+  background: url('images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.3); /* Light gray semi-transparent */
+  padding: 2rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Bigger logo with fade-in */
+.logo {
+  width: 170px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+/* Coming Soon text */
+h1 {
+  color: white;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  margin-top: 0.5rem;
+}
+
+/* Fade-in animation */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+}
+
+.fade-in.delay {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .logo {
+    width: 130px;
+  }
+
+  .overlay {
+    padding: 1.5rem;
+  }
+}
