@@ -1,15 +1,490 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rua</title>
+  <meta name="description" content="A Firewatch-inspired narrative experience set on Achill Island. Targeting Summer 2028." />
+  <style>
+    :root{
+      --bg0:#0b0b12;
+      --bg1:#101018;
+      --ink:#f4efe8;
+      --muted:rgba(244,239,232,.74);
+      --glass:rgba(10,10,18,.48);
+      --accent:#ffb36b;
+      --accent2:#ff6b6b;
+      --shadow:0 18px 55px rgba(0,0,0,.45);
+      --radius:22px;
+      --max:1080px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background: radial-gradient(1100px 800px at 20% 10%, rgba(255,179,107,.18), transparent 55%),
+                  radial-gradient(1200px 700px at 80% 20%, rgba(255,107,107,.14), transparent 55%),
+                  linear-gradient(180deg, #07070c 0%, #0b0b12 30%, #07070c 100%);
+      overflow-x:hidden;
+    }
+
+    /* Subtle grain */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      opacity:.10;
+      pointer-events:none;
+      mix-blend-mode:overlay;
+    }
+
+    .hero{
+      position:relative;
+      min-height: 78vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 40px 18px 70px;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(1200px 650px at 50% 0%, rgba(255,179,107,.24), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.00) 0%, rgba(0,0,0,.62) 70%, rgba(0,0,0,.86) 100%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .wrap{
+      width: min(var(--max), 100%);
+      position:relative;
+      z-index:1;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 0 28px;
+    }
+
+    .logo{
+      width: clamp(140px, 22vw, 210px);
+      height:auto;
+      filter: drop-shadow(0 12px 26px rgba(0,0,0,.60));
+      opacity:.98;
+    }
+
+    .heroCard{
+      background: linear-gradient(180deg, rgba(18,18,28,.56), rgba(10,10,18,.36));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 0;
+    }
+
+    @media (max-width: 860px){
+      .heroGrid{ grid-template-columns: 1fr; }
+    }
+
+    .heroText{
+      padding: 34px 34px 30px;
+    }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:12px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--accent));
+      box-shadow: 0 0 18px rgba(255,179,107,.55);
+    }
+
+    h1{
+      margin: 14px 0 12px;
+      font-size: clamp(34px, 4.2vw, 58px);
+      line-height:1.02;
+      letter-spacing:-.02em;
+    }
+
+    .lead{
+      margin: 0 0 22px;
+      color: rgba(244,239,232,.78);
+      font-size: 16.5px;
+      line-height: 1.7;
+      max-width: 60ch;
+    }
+
+    .ctaRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top: 18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: var(--ink);
+      text-decoration:none;
+      font-weight: 600;
+      letter-spacing:.01em;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+
+    .btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.30); border-color: rgba(255,255,255,.24); }
+    .btnPrimary{
+      border-color: rgba(255,179,107,.42);
+      background: linear-gradient(180deg, rgba(255,179,107,.22), rgba(255,107,107,.10));
+    }
+    .btnPrimary:hover{ border-color: rgba(255,179,107,.62); }
+
+    .heroVisual{
+      position:relative;
+      min-height: 320px;
+      border-left: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(700px 420px at 65% 20%, rgba(255,179,107,.20), transparent 55%),
+        radial-gradient(700px 420px at 30% 60%, rgba(255,107,107,.14), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.50));
+      display:flex;
+      align-items:stretch;
+      justify-content:stretch;
+      overflow:hidden;
+    }
+
+    @media (max-width: 860px){
+      .heroVisual{ border-left: 0; border-top: 1px solid rgba(255,255,255,.10); }
+    }
+
+    .heroVisual img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter: saturate(1.05) contrast(1.05);
+      opacity:.96;
+      transform: scale(1.02);
+    }
+
+    .imageWash{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(900px 520px at 50% 10%, rgba(255,179,107,.22), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.62));
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    .glowLine{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,179,107,.55), transparent);
+      margin: 18px 0 0;
+      opacity:.9;
+    }
+
+    main{ padding: 0 18px 88px; }
+
+    .section{
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      padding-top: 26px;
+    }
+
+    .sectionGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 920px){
+      .sectionGrid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(18,18,28,.48), rgba(10,10,18,.30));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .cardInner{ padding: 22px 22px 20px; }
+
+    h2{
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing:-.01em;
+    }
+
+    .p{
+      margin: 0;
+      color: rgba(244,239,232,.76);
+      line-height: 1.75;
+      font-size: 15.5px;
+    }
+
+    .media{
+      position:relative;
+      aspect-ratio: 16 / 10;
+      overflow:hidden;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter: saturate(1.05) contrast(1.05);
+      transform: scale(1.02);
+      opacity:.98;
+    }
+    .media::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(800px 460px at 40% 10%, rgba(255,179,107,.20), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.58));
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    /* Contact */
+    .formRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    @media (max-width: 720px){
+      .formRow{ grid-template-columns: 1fr; }
+    }
+    label{
+      display:block;
+      font-size: 13px;
+      color: rgba(244,239,232,.70);
+      margin: 10px 0 6px;
+    }
+    input, textarea{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: var(--ink);
+      padding: 12px 12px;
+      outline: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25) inset;
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+
+    .formActions{
+      display:flex;
+      gap: 12px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+      align-items:center;
+    }
+
+    footer{
+      width: min(var(--max), 100%);
+      margin: 42px auto 0;
+      padding: 18px 0 0;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.55);
+      font-size: 13px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .tiny{ color: rgba(255,255,255,.55); }
+    .link{
+      color: rgba(255,179,107,.92);
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(255,179,107,.35);
+    }
+    .link:hover{ border-bottom-color: rgba(255,179,107,.75); }
+
+    html{ scroll-behavior:smooth; }
+  </style>
 </head>
+
 <body>
-  <div class="overlay">
-    <img src="images/logo.png" alt="Logo" class="logo fade-in" />
-    <h1 class="fade-in delay">Coming Soon</h1>
-  </div>
+  <section class="hero" id="top">
+    <div class="wrap">
+      <header>
+        <img class="logo" src="images/logo.png" alt="Logo" />
+      </header>
+
+      <div class="heroCard">
+        <div class="heroGrid">
+          <div class="heroText">
+            <div class="kicker"><span class="dot"></span> Firewatch inspiration • a lone developer</div>
+            <h1>Rua</h1>
+            <p class="lead">
+              A first-person narrative exploration game set on Achill Island, focused on place, pacing, and atmosphere.
+              <br><br>
+              Target: <strong>Summer 2028</strong>.
+            </p>
+
+            <div class="ctaRow">
+              <a class="btn btnPrimary" href="#inspiration">Inspiration</a>
+              <a class="btn" href="#progress">December 2025</a>
+              <a class="btn" href="#story">Story</a>
+              <a class="btn" href="#contact">Contact</a>
+            </div>
+
+            <div class="glowLine"></div>
+          </div>
+
+          <div class="heroVisual" aria-label="Hero image">
+            <img src="images/firewatch.png" alt="Firewatch mood reference" />
+            <div class="imageWash"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- Inspiration -->
+    <section class="section" id="inspiration">
+      <div class="wrap">
+        <div class="sectionGrid">
+          <article class="card">
+            <div class="cardInner">
+              <h2>Firewatch inspiration</h2>
+              <p class="p">
+                The goal isn’t “more mechanics.” The goal is a reason to keep walking with
+                destinations that matter, paths that guide, and a world that
+                breathes through subtle detail.
+              </p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="media">
+              <img src="images/orange.png" alt="Sunset mood image" />
+            </div>
+            <div class="cardInner">
+              <h2>One developer, one world</h2>
+              <p class="p">
+                Rua is being built slowly and deliberately. The plan is to open the platform first
+                get the foundations strong then pour story and atmosphere into it until it feels real.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section class="section" id="progress">
+      <div class="wrap">
+        <div class="sectionGrid">
+          <article class="card">
+            <div class="cardInner">
+              <h2>Where I stand — December 2025</h2>
+              <p class="p">
+                Right now, the focus is on building the “platform” for Rua, the core that everything
+                sits on. That means solid foundations before content:
+                <br><br>
+                • Core project structure and clean workflow<br>
+                • Player movement feel and camera rhythm<br>
+                • Code systems that won’t collapse later<br>
+                • Animation groundwork (base locomotion + interaction approach)<br>
+                • Asset direction (stylised realism, consistent palette, Irish atmosphere)<br>
+                • Terrain experiments for Achill Island scale and silhouette<br>
+                • Early lighting tests for warm haze, long shadows, and depth
+              </p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="cardInner">
+              <h2>What comes next</h2>
+              <p class="p">
+                Once the base is strong, the next step is a focused playable slice a short walk
+                that proves the mood, pacing, and place. Then the world expands carefully: more paths,
+                more landmarks, more story, more moments.
+                <br><br>
+                The main rule: keep it honest, simple, and emotionally grounded.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Story -->
+    <section class="section" id="story">
+      <div class="wrap">
+        <div class="sectionGrid">
+          <article class="card">
+            <div class="media">
+              <img src="images/achill.png" alt="Achill Island inspiration image" />
+            </div>
+            <div class="cardInner">
+              <h2>Story</h2>
+              <p class="p">
+                You’re trying to escape the noise,the screens, the endless feeds, the constant
+                pull of technology. So you go somewhere that still feels older than all of that.
+                Somewhere with wind, distance, and silence.
+                <br><br>
+                Set on <strong>Achill Island</strong>, the story is less about “winning” and more
+                about reaching places that change how you feel.
+              </p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="cardInner">
+              <h2>What you’ll experience</h2>
+              <p class="p">
+                This will not be a game for everyone. It will be a grounded, slow journey where the landscape guides you with shape and light.
+                Movement is intentional, quiet tasks pull you forward, and the world rewards patience
+                with viewpoints, atmosphere, and small discoveries that imply history.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    
+  </main>
+
+
 </body>
 </html>
